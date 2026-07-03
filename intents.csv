@@ -1,0 +1,52 @@
+text,intent
+check my balance,balance_inquiry
+how much money I have,balance_inquiry
+transfer money,money_transfer
+send 500 rupees,money_transfer
+block my card,card_block
+hi,greeting
+hello,greeting
+hey,greeting
+good morning,greeting
+good afternoon,greeting
+good evening,greeting
+hello chatbot,greeting
+check account balance,balance_inquiry
+show my account balance,balance_inquiry
+what is my balance,balance_inquiry
+how much balance is left,balance_inquiry
+transfer 100 to ali,money_transfer
+send money to my friend,money_transfer
+move funds to another account,money_transfer
+i want to transfer cash,money_transfer
+please block my debit card,card_block
+disable my card now,card_block
+freeze my card,card_block
+send 250 to bob,money_transfer
+transfer to alice,money_transfer
+move 1000 to john,money_transfer
+send funds to dave,money_transfer
+i want to send money,money_transfer
+transfer rupees,money_transfer
+pay my friend,money_transfer
+send cash to family,money_transfer
+transfer amount to account,money_transfer
+send 500 to ali,money_transfer
+transfer 1000,money_transfer
+send to bob,money_transfer
+move money to john,money_transfer
+transfer to dave,money_transfer
+send 100 rupees to alice,money_transfer
+transfer 250 to alice,money_transfer
+am i eligible for a loan,loan_eligibility
+can i get a loan,loan_eligibility
+what are my loan options,loan_eligibility
+check loan eligibility,loan_eligibility
+loan information,loan_eligibility
+tell me about loans,loan_eligibility
+what loans do you offer,loan_eligibility
+how much can i borrow,loan_eligibility
+i want to apply for a loan,loan_eligibility
+loan details,loan_eligibility
+
+
