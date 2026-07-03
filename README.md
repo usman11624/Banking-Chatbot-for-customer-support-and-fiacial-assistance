@@ -185,14 +185,3 @@ python -m pytest tests/ -v
 - ✅ Production-ready code
 
 ---
-
-## 🎓 Academic Project
-
-Final Year Project (FYP) - Banking Chatbot System
-- Full-stack web application
-- PostgreSQL database with 16 tables
-- Flask REST API with ML/NLP integration
-- React frontend dashboard
-
-**Created:** May 2026  
-**Status:** ✅ COMPLETE & TESTED
