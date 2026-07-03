@@ -1,0 +1,90 @@
+# Banking Chatbot - Full System Audit Report
+
+> [!NOTE]
+> This document serves as a finalized technical audit of the Banking Chatbot system, detailing its underlying architecture, connected pipelines, and the real-world problems it addresses.
+
+## 1. Executive Summary & Problem Statement
+
+### The Real-World Problem
+Traditional retail banking often suffers from friction in customer support and self-service operations. Customers must either navigate complex web dashboards or wait in queues for human representatives to perform simple tasks like checking balances, initiating transfers, or inquiring about loan policies. 
+
+### The Solution
+This project solves that friction by providing a **Unified Conversational Banking Interface**. It acts as an autonomous, 24/7 intelligent agent that doesn't just answer FAQs, but actually executes secure banking operations (like fund transfers and fraud reporting) directly through natural language. It democratizes banking access, making it as simple as texting a friend.
+
+---
+
+## 2. Technology Stack
+
+The application is built using a modern, decoupled full-stack architecture:
+
+### Frontend Layer
+- **Framework:** React 18
+- **Styling & UI:** Pure CSS3 with `framer-motion` for fluid micro-animations.
+- **Icons & Assets:** `lucide-react`
+- **Networking:** `axios` and native `fetch` API for asynchronous backend communication.
+
+### Backend Layer
+- **Server:** Python 3.13 with Flask (REST API framework)
+- **CORS:** `Flask-Cors` for cross-origin resource sharing.
+- **Security:** `bcrypt` for password hashing and custom token generation (`uuid`).
+- **Environment Management:** `python-dotenv`
+
+### Database Layer
+- **Engine:** SQLite (`banking_bot.db`)
+- **Structure:** Relational tables including `customers`, `accounts`, `bank_transactions`, `auth_sessions`, `fraud_alerts`, and `loans`.
+- *(Note: While the original setup guide mentions PostgreSQL, the system is actively utilizing a robust local SQLite schema for higher portability and simpler local testing).*
+
+### AI & NLP Engine
+- **Intent Classification:** `scikit-learn` (`TfidfVectorizer` + `LogisticRegression`) trained on a custom dataset (`intents.csv`).
+- **RAG (Retrieval-Augmented Generation):** `langchain`, `FAISS` (vector database), and `OpenAIEmbeddings` to process static documents (`data.txt`).
+- **Generative LLM:** Integrated with `Groq` for high-speed conversational responses.
+
+---
+
+## 3. System Architecture & Pipeline
+
+How everything connects from the user to the database:
+
+```mermaid
+graph TD
+    A[React Frontend] <-->|JSON over HTTP REST| B(Flask Backend API)
+    B <--> C[(SQLite Database)]
+    B -->|User Input| D{NLP Pipeline}
+    D -->|Intent Matching| E[Scikit-Learn Classifier]
+    D -->|FAQ / Policies| F[LangChain RAG + FAISS]
+    D -->|Conversational Fallback| G[Groq LLM API]
+    E -->|Execute Actions| C
+```
+
+### The Request Pipeline
+1. **User Interaction:** A user types a command into the React chat interface (e.g., "Transfer $500 to account 2").
+2. **API Routing:** The request hits the Flask `/chat` route.
+3. **Authentication:** The custom JWT token is validated against the `auth_sessions` table.
+4. **NLP Processing:** 
+   - The user's text is vectorized and passed through the `LogisticRegression` model.
+   - If the intent is classified as `transfer`, the backend extracts the entities (amount, recipient) and executes the SQL transaction safely via `app.db`.
+   - If it's a general question, the system queries the `FAISS` vector store (RAG) to fetch relevant banking policies before using the LLM to generate a natural response.
+5. **Response:** The backend returns the transaction status and an AI-generated confirmation message to the frontend.
+
+---
+
+## 4. Key Sub-Systems
+
+### 🔐 Security & Authentication
+Instead of relying on heavy third-party OAuth providers, the system implements a custom, database-backed token system. Passwords are salted and hashed via `bcrypt`. Every login generates a unique `uuid` token tracked in the database, tying the session securely to the user's IP and device.
+
+### 💰 Transaction Engine
+The `app.db` module ensures ACID compliance by utilizing SQL `BEGIN TRANSACTION` and `COMMIT/ROLLBACK` blocks. When a transfer occurs, it safely debits the sender, credits the receiver, and logs the transaction simultaneously. It also triggers an automatic `Fraud Alert` if the transaction exceeds $10,000.
+
+### 🧠 Dynamic Credit Scoring
+The backend dynamically calculates credit scores based on real-time data. It reads the total balance across all user accounts and counts the volume of transactions to algorithmically output a credit score, updating live as the user interacts with the app.
+
+---
+
+## 5. Deployment & Portability
+
+The project has been optimized for **Universal Portability**. 
+- It features a natively compiled `Start Banking Bot.exe` (built via C#) that auto-detects missing environments.
+- If dependencies are missing, it autonomously creates the Python `venv`, triggers `pip install`, and runs `npm install`.
+- It requires no external database daemons (due to SQLite) and no complex Docker setups.
+- **Result:** It can run seamlessly on any Windows machine with minimal prerequisites.
